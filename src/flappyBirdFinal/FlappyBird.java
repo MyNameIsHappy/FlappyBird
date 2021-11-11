@@ -4,8 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.EventObject;
 import java.util.Random;
 
 public class FlappyBird implements ActionListener, MouseListener, KeyListener {
@@ -31,7 +29,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         renderer = new Renderer();
 
         jframe.add(renderer);
-        jframe.setSize(HEIGHT,WIDTH);
+        jframe.setSize(WIDTH,HEIGHT);
         jframe.setVisible(true);
         jframe.setResizable(false);
         jframe.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -125,7 +123,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         }
 
         g.setColor(Color.white);
-        g.setFont(new Font("Arial", 1, 75));
+        g.setFont(new Font("Arial", Font.BOLD, 75));
 
 
         if (gameOver)                   //gameOver screen when you died
