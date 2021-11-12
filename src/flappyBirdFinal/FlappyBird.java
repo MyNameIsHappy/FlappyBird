@@ -21,7 +21,6 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
     JButton bScore = new JButton("Save Score");
     private int ticks, yMotion, score;
     private String highscore = "";
-    private int scores;
 
     public FlappyBird()
     {
