@@ -14,7 +14,8 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
     private final Renderer renderer;
     private Rectangle bird;
     private final ArrayList <Rectangle> columns;
-    private boolean started, gameOver;
+    private boolean started = false;
+    private boolean gameOver = false;
     private final Random rand;
     JButton bStart = new JButton("start");
     private int ticks, yMotion, score;
@@ -75,12 +76,8 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         g.fillRect(column.x, column.y, column.width, column.height);
     }
 
-    public void jump()
-    {
+    public void restartGame(){
 
-        if (!started){
-            started = true;
-        }
         if (gameOver)           //restart game if gameOver
         {
             bird = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
@@ -92,21 +89,27 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
             addColumn(true);
             addColumn(true);
             addColumn(true);
-            SaveScore();
 
             gameOver = false;
         }
-        else if (!gameOver)
+        startGame();
+    }
+    public void startGame(){
+        if (!started){
+            started = true;
+        }
+    }
+    public void jump()
+    {
+        if (!gameOver)
         {
             if (yMotion > 0)
             {
                 yMotion = 0;            //Bird gravitiy
             }
-
             yMotion -= 10;
         }
     }
-
     public void repaint(Graphics g){
         g.setColor(Color.cyan);
         g.fillRect(0, 0, WIDTH, HEIGHT);
@@ -124,10 +127,8 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         {
             paintColumn(g, column);
         }
-
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.BOLD, 50));
-
 
         if (gameOver)                   //gameOver screen when you died
         {
@@ -145,7 +146,6 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
             //init the highscore
             highscore = this.GetHighScoreValue();
         }
-
     }
 
     @Override
@@ -153,17 +153,14 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         ticks++;
         int speed;
 
-        if (e.getSource()==bStart) {            //Funktion for bStart
-            bStart.setText("Spiel läuft!");
+        if (e.getSource()==bStart)
+        {   //Funktion for bStart
             jump();
-
-            if (FlappyBird.flappyBird.bStart.getText().equals(" Restart! "))
-            {
-                bStart.setText("Spiel läuft!");
-                jump();
-            }
         }
-
+        if (!gameOver && !started && e.getSource()==bStart){
+            startGame();
+            bStart.setText("Jump");
+        }
         if (started && !gameOver) {         //Movement for Gamefield
             speed = 10;
 
@@ -200,7 +197,6 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
             {
                 score++;
             }
-
             if (column.intersects(bird))
             {
                 gameOver = true;
@@ -208,7 +204,6 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
                 if (bird.x <= column.x)
                 {
                     bird.x = column.x - bird.width;
-
                 }
                 else
                 {
@@ -227,7 +222,6 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         {
             gameOver = true;
         }
-
         if (bird.y + yMotion >= HEIGHT - 120)
         {
             bird.y = HEIGHT - 120 - bird.height;
@@ -235,7 +229,9 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         }
         if (gameOver)
         {
-            bStart.setText("Restart");
+            bStart.setText("Another One");
+            if(e.getSource()==bStart)
+                restartGame();
         }
         renderer.repaint();
     }
@@ -295,18 +291,15 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
                 e.printStackTrace();
             }
         }
-
     }
     @Override
     public void keyTyped(KeyEvent e) {
 
     }
-
     @Override
     public void keyPressed(KeyEvent e) {
 
     }
-
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE)
@@ -314,27 +307,22 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
             jump();
         }
     }
-
     @Override
     public void mouseClicked(MouseEvent e) {
 
     }
-
     @Override
     public void mousePressed(MouseEvent e) {
 
     }
-
     @Override
     public void mouseReleased(MouseEvent e) {
 
     }
-
     @Override
     public void mouseEntered(MouseEvent e) {
 
     }
-
     @Override
     public void mouseExited(MouseEvent e) {
 
