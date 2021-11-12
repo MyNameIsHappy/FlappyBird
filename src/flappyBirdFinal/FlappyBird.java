@@ -18,9 +18,10 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
     private boolean gameOver = false;
     private final Random rand;
     JButton bStart = new JButton("start");
+    JButton bScore = new JButton("Save Score");
     private int ticks, yMotion, score;
     private String highscore = "";
-
+    private int scores;
 
     public FlappyBird()
     {
@@ -39,9 +40,10 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
 
         //add Button to JPanels
         jPanel.add(bStart);
+        jPanel.add(bScore);
         this.renderer.add(jPanel);
         bStart.addActionListener(this);
-
+        bScore.addActionListener(this);
 
         bird = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
 
@@ -52,7 +54,6 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         addColumn(true);
 
         timer.start();
-
     }
 
     public void addColumn(boolean start){
@@ -135,11 +136,10 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
             g.drawString("Game Over!", 275, 300);
             g.drawString("Your Score: " + score, 275 - 25, 450);
             g.drawString("Highscore: " + highscore, 285 - 25, 525);
-
         }
         if (!gameOver && started)           //paints Score
         {
-            g.drawString(String.valueOf(score), WIDTH / 2 - 25, 700);
+            g.drawString(String.valueOf(score), 750, 700);
         }
         if (highscore.equals(""))
         {
@@ -157,6 +157,8 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         {   //Funktion for bStart
             jump();
         }
+        if (e.getSource()==bScore)
+            SaveScore();
         if (!gameOver && !started && e.getSource()==bStart){
             startGame();
             bStart.setText("Jump");
@@ -240,7 +242,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
          if (gameOver)
          {//Users saves record
              String name = JOptionPane.showInputDialog("Whats your name?");
-             highscore = name + ":" + score;
+             highscore = name + " " + score;
 
              File scoreFile = new File("highscore.dat");
              if (!scoreFile.exists()) {
@@ -256,6 +258,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
                  writeFile = new FileWriter(scoreFile);
                  writer = new BufferedWriter(writeFile);
                  writer.write(this.highscore);
+
              } catch (IOException e) {
                  e.printStackTrace();
              }finally {
