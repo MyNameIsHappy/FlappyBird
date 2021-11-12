@@ -3,20 +3,22 @@ package flappyBirdFinal;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class FlappyBird implements ActionListener, MouseListener, KeyListener {
 
     public static FlappyBird flappyBird;
-    public int WIDTH = 800, HEIGHT = 800;
-    public Renderer renderer;
-    public Rectangle bird;
-    public ArrayList <Rectangle> columns;
-    public boolean started, gameOver;
-    public Random rand;
+    private final int WIDTH = 800, HEIGHT = 800;
+    private final Renderer renderer;
+    private Rectangle bird;
+    private final ArrayList <Rectangle> columns;
+    private boolean started, gameOver;
+    private final Random rand;
     JButton bStart = new JButton("start");
-    public int ticks, yMotion, score;
+    private int ticks, yMotion, score;
+    private String highscore = "";
 
 
     public FlappyBird()
@@ -90,6 +92,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
             addColumn(true);
             addColumn(true);
             addColumn(true);
+            SaveScore();
 
             gameOver = false;
         }
@@ -123,18 +126,24 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         }
 
         g.setColor(Color.white);
-        g.setFont(new Font("Arial", Font.BOLD, 75));
+        g.setFont(new Font("Arial", Font.BOLD, 50));
 
 
         if (gameOver)                   //gameOver screen when you died
         {
-            g.drawString("Game Over!", WIDTH / 4, HEIGHT / 2 - 50);
-            g.drawString(String.valueOf(score), WIDTH / 2 - 25, 500);
+            g.drawString("Game Over!", 275, 300);
+            g.drawString("Your Score: " + score, 275 - 25, 450);
+            g.drawString("Highscore: " + highscore, 285 - 25, 525);
 
         }
         if (!gameOver && started)           //paints Score
         {
             g.drawString(String.valueOf(score), WIDTH / 2 - 25, 700);
+        }
+        if (highscore.equals(""))
+        {
+            //init the highscore
+            highscore = this.GetHighScoreValue();
         }
 
     }
@@ -230,7 +239,64 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener {
         }
         renderer.repaint();
     }
+     public void SaveScore(){
+        //format Name/:/Score
+         if (gameOver)
+         {//Users saves record
+             String name = JOptionPane.showInputDialog("Whats your name?");
+             highscore = name + ":" + score;
 
+             File scoreFile = new File("highscore.dat");
+             if (!scoreFile.exists()) {
+                 try {
+                     scoreFile.createNewFile();
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+             FileWriter writeFile = null;
+             BufferedWriter writer = null;
+             try {
+                 writeFile = new FileWriter(scoreFile);
+                 writer = new BufferedWriter(writeFile);
+                 writer.write(this.highscore);
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }finally {
+                 if (writer != null) {
+                     try {
+                         writer.close();
+                     } catch (IOException e) {
+                         e.printStackTrace();
+                     }
+                 }
+             }
+         }
+     }
+    public String GetHighScoreValue(){
+        //format:   Name:Score
+        FileReader readFile = null;
+        BufferedReader reader = null;
+        try
+        {
+            readFile = new FileReader("highscore.dat");
+            reader = new BufferedReader(readFile);
+            return reader.readLine();
+        }
+        catch ( Exception e){
+            return "0";
+        }
+        finally
+        {
+            try {
+                if (reader != null)
+                    reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
     @Override
     public void keyTyped(KeyEvent e) {
 
